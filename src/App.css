@@ -25,12 +25,18 @@
   border: none;
   cursor: pointer;
   margin-bottom: 1rem;
+  border-radius: 4px;
+  font-weight: bold;
+}
+.explain-btn:hover {
+  background-color: #006ee3;
 }
 
 .explanation {
   width: 100%;
   min-height: 100px;
-  border: 1px solid #ccc;
+  border: 1px solid #eee;
+  background-color: #eee;
   padding: 1rem;
   font-family: Arial, sans-serif;
 }

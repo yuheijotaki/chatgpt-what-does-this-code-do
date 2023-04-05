@@ -1,8 +1,13 @@
 import React, { useState } from "react";
-import axios from "axios";
+import { Configuration, OpenAIApi } from 'openai';
 import "./App.css";
 
 function App() {
+  const configuration = new Configuration({
+    apiKey: process.env.REACT_APP_OPENAI_API_KEY,
+  });
+  const openai = new OpenAIApi(configuration);
+
   const maxTokens = 256
   const [code, setCode] = useState("");
   const [explanation, setExplanation] = useState("");
@@ -17,9 +22,8 @@ function App() {
     setLoading(true);
 
     try {
-      const response = await axios.post(
-        'https://api.openai.com/v1/chat/completions',
-        {
+      let options = {
+          // model: 'text-davinci-003',
           model: 'gpt-3.5-turbo',
           messages: [
             { role: "system", content: "あなたはコードを説明するエキスパートです。" },
@@ -29,16 +33,14 @@ function App() {
           n: 1,
           stop: null,
           temperature: 0.5,
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${process.env.REACT_APP_OPENAI_API_KEY}`,
-          },
-        }
-      );
+      };
 
-      const result = response.data.choices[0].message.content
+      let completeOptions = {
+          ...options
+      };
+      const response = await openai.createChatCompletion(completeOptions);
+
+      const result = response.data.choices[0].message?.content
       setExplanation(result || "コードを読み取りできませんでした");
     } catch (error) {
       setExplanation("エラーが発生しました");
@@ -59,7 +61,7 @@ function App() {
         コードを説明する
       </button>
       <div className="explanation">
-        {loading ? "読み込み中" : explanation}
+        {loading ? "読み込み中..." : explanation}
       </div>
     </div>
   );
